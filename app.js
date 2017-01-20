@@ -10,9 +10,6 @@ var app = express();
 
 
 var index = require('./routes/index');
-// var GoogleStrategy=require('passport-google-oauth').OAuth2Strategy;
-// var session=require('express-session');
-
 
 
 // view engine setup
@@ -23,11 +20,25 @@ var mongoose=require('mongoose');
 mongoose.connect('mongodb://localhost:27017/flight');
 
 
-require("./utils/passportAuth")(passport);
+// var GoogleStrategy=require('passport-google-oauth').OAuth2Strategy;
+// var session=require('express-session');
+
+// app.use(session({
+// 	secret:'dontknow',
+// 	saveUninitialized:true,
+// 	resave:true
+// }));
+
+// app.use(passport.session());
+app.use(passport.initialize());
+
+// require("./utils/passportAuth")(passport);
+require(require('path').join(__dirname, './utils/passportAuth'))(passport);
 
 app.all('*', function(req, res, next){
   passport.authenticate('jwt', {session: false}, function(err, user){
       if(!err){
+        // console.log("user",user);
         req.user = user;
         return next();
       } else{
@@ -40,14 +51,6 @@ app.all('*', function(req, res, next){
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
-// app.use(session({
-// 	secret:'dontknow',
-// 	saveUninitialized:true,
-// 	resave:true
-// }));
-
-// app.use(passport.initialize());
-// app.use(passport.session());
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
