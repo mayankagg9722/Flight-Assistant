@@ -4,14 +4,14 @@ require("dotenv").config();
 var jwt=require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 var User = require('../model/user');
-var passport = require("passport");
+// var passport = require("passport");
 // var GoogleStartegy=require("passport-google-oauth").OAuth2Strategy;
 
 
 router.get('/', function (req, res, next) {
 	console.log(req.user);
 	res.json({
-        status: "working"
+        status: "working index page"
     });
 });
 
