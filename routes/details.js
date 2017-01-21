@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 require("dotenv").config();
-var jwt = require('jsonwebtoken');
-var bcrypt = require('bcrypt');
 var Details = require('../model/flight');
 var unirest = require('unirest');
 
@@ -13,15 +11,15 @@ router.get('/', function (req, res, next) {
     });
 });
 
-router.get('/flight', function (req, res, next) {
+router.post('/flight', function (req, res, next) {
 
     // var flight_code = "6E";
     // var flight_number = "302";
     // var date = "2017/1/21";
 
-    var flight_code=req.body.flight_code;
-    var flight_number=req.body.flight_number;
-    var date=req.body.date;
+    var flight_code = req.body.flight_code;
+    var flight_number = req.body.flight_number;
+    var date = req.body.date;
 
     var url = "https://api.flightstats.com/flex/flightstatus/rest/v2/json/flight/status/" + flight_code + "/" + flight_number + "/" + "dep/" + date + "?appId=" + process.env.appId + "&appKey=" + process.env.appKey + "&utc=false";
     unirest.get(url)
@@ -35,26 +33,36 @@ router.get('/flight', function (req, res, next) {
 
 });
 
-router.get('/weather', function (req, res, next) {
+router.post('/weather', function (req, res, next) {
     // var airport = "DEL";
-    var airport=req.body.airport;
+    var airport = req.body.airport;
     var url = "https://api.flightstats.com/flex/weather/rest/v1/json/all/" + airport + "?appId=" + process.env.appId + "&appKey=" + process.env.appKey + "&utc=false";
     unirest.get(url)
         .end(function (data) {
-            res.json({
-                status: data.statusCode,
-                weather: data.body.metar
-            });
+            if (!req.user) {
+                res.status = 401;
+                res.json({
+                    status: false,
+                    redirect: 'login',
+                    message: "Authentication Failed"
+                })
+            }
+            else {
+                res.status = 200;
+                res.json({
+                    status: data.statusCode,
+                    weather: data.body.metar
+                });
+            }
         });
 });
 
-router.get('/nearby', function (req, res, next) {
-
+router.post('/nearby', function (req, res, next) {
+    // var lat="13.0827";
+    // var lng="80.2707";
     var lat = req.body.lat;
     var lng = req.body.lng;
     var querry = req.body.querry;
-    // var lat="13.0827";
-    // var lng="80.2707";
     // var querry=
     // amusement_park
     // aquarium
@@ -94,7 +102,7 @@ router.post('/addflight', function (req, res, next) {
         res.status = 401;
         res.json({
             status: false,
-            redirect:'login',
+            redirect: 'login',
             message: "Authentication Failed"
         })
     } else {
