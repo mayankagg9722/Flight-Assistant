@@ -11,6 +11,7 @@ var app = express();
 
 var index = require('./routes/index');
 var details=require('./routes/details');
+var cab=require('./routes/cab');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -63,7 +64,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/details',details);
-
+app.use('/cab',cab);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
