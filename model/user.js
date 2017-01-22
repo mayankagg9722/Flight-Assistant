@@ -22,6 +22,9 @@ var User = new mongoose.Schema({
 	email: {
         type: String,
         required: true,
+    },
+    referral:{
+        type:String
     }
 });
 
