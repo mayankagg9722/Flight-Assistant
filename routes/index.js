@@ -92,10 +92,11 @@ router.post('/getotp', function (req, res, next) {
 				});
 			} else {
 				res.json({
+					status:true,
 					otp:code
 				})
 				// twilio.sendMessage({
-				// 	to: data.mobile_number,
+				// 	to: 'data.mobile_number',
 				// 	from: '+1352464-8838 ',
 				// 	body: code
 				// }, function (err, responseData) {
@@ -126,7 +127,7 @@ router.post('/postotp', function (req, res, next) {
 			if (data == null) {
 				res.status = 200;
 				res.json({
-					status: true,
+					status: false,
 					message: "OTP fail"
 				});
 			} else {
@@ -135,7 +136,7 @@ router.post('/postotp', function (req, res, next) {
 					message:"OTP success"
 				});
 				// twilio.sendMessage({
-				// 	to: data.mobile_number,
+				// 	to: '9003855431',
 				// 	from: '+1352464-8838 ',
 				// 	body: otp
 				// }, function (err, responseData) {
