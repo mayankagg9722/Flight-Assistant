@@ -25,9 +25,10 @@ router.post('/flight', function (req, res, next) {
     unirest.get(url)
         .end(function (data) {
             res.json({
-                status: data.statusCode,
-                airline_name: data.body.appendix.airlines,
-                flightStatuses: data.body.flightStatuses
+                status: true,
+                body:data.body
+            //     airline_name: data.body.appendix.airlines,
+            //     flightStatuses: data.body.flightStatuses
             });
         });
 
