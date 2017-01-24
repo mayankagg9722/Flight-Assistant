@@ -135,18 +135,6 @@ router.post('/postotp', function (req, res, next) {
 					status:true,
 					message:"OTP success"
 				});
-				// twilio.sendMessage({
-				// 	to: '9003855431',
-				// 	from: '+1352464-8838 ',
-				// 	body: otp
-				// }, function (err, responseData) {
-				// 	if (!err) {
-				// 		console.log(responseData.from);
-				// 		console.log(responseData.body);
-				// 	} else {
-				// 		console.log(err);
-				// 	}
-				// });
 			}
 		}
 	});
