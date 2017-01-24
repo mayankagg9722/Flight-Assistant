@@ -111,6 +111,7 @@ router.post('/addflight', function (req, res, next) {
             username: req.user.username,
             flight: req.body
         });
+        console.log(flight);
         flight.save(function (err) {
             if (err) {
                 res.status = 401;
@@ -125,6 +126,41 @@ router.post('/addflight', function (req, res, next) {
                     success: true,
                     message: "Added Successfully"
                 });
+            }
+        });
+    }
+});
+
+router.get('/flighthistory', function (req, res, next) {
+    if (!req.user) {
+        res.status = 401;
+        res.json({
+            status: false,
+            redirect: 'login',
+            message: "Authentication Failed"
+        })
+    } else {
+         Details.findOne({ username: req.user.username }, function (err, data) {
+            if (err) {
+                res.status = 401;
+                res.json({
+                    status: false,
+                    message: "Error"
+                });
+            } else {
+                if (data == null) {
+                    res.status = 200;
+                    res.json({
+                        status: false,
+                        message: "Not added any flight."
+                    });
+                } else {
+                    res.status = 200;
+                    res.json({
+                        status: true,
+                        data: data
+                    });
+                }
             }
         });
     }
