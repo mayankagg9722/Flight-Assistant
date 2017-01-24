@@ -93,7 +93,8 @@ router.post('/nearby', function (req, res, next) {
     unirest.get(url)
         .end(function (data) {
             res.json({
-                status: data.body.results
+                status: true,
+                data:data.body.results
             });
         });
 });
