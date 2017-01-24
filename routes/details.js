@@ -49,11 +49,13 @@ router.post('/weather', function (req, res, next) {
                 })
             }
             else {
+                if(!(data.body.metar==undefined)){
                 res.status = 200;
                 res.json({
                     status: data.statusCode,
                     weather: data.body.metar
                 });
+                }
             }
         });
 });
