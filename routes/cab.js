@@ -4,6 +4,7 @@ require("dotenv").config();
 var getCab = require('../model/getcab');
 var postCab = require('../model/postcab');
 var unirest = require('unirest');
+var User = require('../model/user');
 
 router.get('/', function (req, res, next) {
     console.log(req.user);
@@ -207,11 +208,19 @@ router.get('/postcabinfo', function (req, res, next) {
                             } else {
                                 getCheckLocation(info, data, function (ob) {
                                     // console.log("printing data");
+                                     if(ob=="noInternet"){
+                                    res.status = 400;
+                                    res.json({
+                                        status: false,
+                                        data: ob
+                                    }); 
+                                    }else{
                                     res.status = 200;
                                     res.json({
                                         status: true,
                                         data: ob
                                     });
+                                    }
                                 });
                             }
                         }
@@ -269,11 +278,19 @@ router.get('/getcabinfo', function (req, res, next) {
                             } else {
                                 getCheckLocation(info, data, function (ob) {
                                     // console.log("printing data");
+                                    if(ob=="noInternet"){
+                                    res.status = 400;
+                                    res.json({
+                                        status: false,
+                                        data: ob
+                                    }); 
+                                    }else{
                                     res.status = 200;
                                     res.json({
                                         status: true,
                                         data: ob
                                     });
+                                    }
                                 });
                             }
                         }
@@ -299,10 +316,15 @@ getCheckLocation = function (info, data, callback) {
 
 
     function checkCurrent(cloc) {
-        if (cloc.body.rows[0].elements[0].distance.value < 500) {
+        if(cloc.body!=undefined){
+            if (cloc.body.rows[0].elements[0].distance.value < 500) {
             unirest.get(destination_url)
                 .end(checkDestination);
             // console.log("checkCurrent");
+        }
+        }else{
+            console.log(":xdwxw");
+            callback("noInternet");
         }
     }
 
