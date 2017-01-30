@@ -21,10 +21,14 @@ var User = new mongoose.Schema({
     },
 	email: {
         type: String,
-        required: true,
+        required: true
     },
     referral:{
         type:String
+    },
+    isVerified:{
+        type:Boolean,
+        required:true
     }
 });
 

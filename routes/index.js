@@ -15,7 +15,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/login', function (req, res, next) {
-	User.findOne({ username: req.body.username }, function (err, user) {
+	User.findOne({ username: req.body.username,isVerified:true }, function (err, user) {
 		if (err) {
 			err.status = 401;
 			next(err);
@@ -52,15 +52,16 @@ router.post('/register', function (req, res, next) {
 		password: req.body.password,
 		name: req.body.name,
 		mobile_number: req.body.mobile_number,
-		email: req.body.email
+		email: req.body.email,
+		isVerified: false
 	});
 
 	newUsr.save(function (err) {
 		if (err) {
-			res.status = 401;
+			res.status = 400;
 			res.json({
 				success: false,
-				message: "Unable to save data"
+				message: "OTP"
 			});
 		}
 		else {
@@ -75,8 +76,8 @@ router.post('/register', function (req, res, next) {
 
 router.post('/getotp', function (req, res, next) {
 	var username = req.body.username;
-	var code=otp();
-	User.findOneAndUpdate({ username: username }, { $set: { referral: code }}, function (err, data) {
+	var code = otp();
+	User.findOneAndUpdate({ username: username,isVerified:false }, { $set: { referral: code } }, function (err, data) {
 		if (err) {
 			res.status = 401;
 			res.json({
@@ -92,9 +93,9 @@ router.post('/getotp', function (req, res, next) {
 				});
 			} else {
 				res.json({
-					status:true,
-					otp:code
-				})
+					status: true,
+					otp: code
+				});
 				// twilio.sendMessage({
 				// 	to: 'data.mobile_number',
 				// 	from: '+1352464-8838 ',
@@ -116,7 +117,8 @@ router.post('/getotp', function (req, res, next) {
 router.post('/postotp', function (req, res, next) {
 	var username = req.body.username;
 	var otp = req.body.otp;
-	User.findOne({ username: username,referral:otp}, function (err, data) {;
+	User.findOne({ username: username, referral: otp }, function (err, data) {
+		;
 		if (err) {
 			res.status = 401;
 			res.json({
@@ -131,9 +133,27 @@ router.post('/postotp', function (req, res, next) {
 					message: "OTP fail"
 				});
 			} else {
-				res.json({
-					status:true,
-					message:"OTP success"
+				User.findOneAndUpdate({ username: username }, { $set: { isVerified: true } }, function (err, data) {
+					if (err) {
+						res.status = 401;
+						res.json({
+							status: false,
+							message: "Error"
+						});
+					} else {
+						if (data == null) {
+							res.status = 200;
+							res.json({
+								status: true,
+								message: "User Not Registered"
+							});
+						} else {
+							res.json({
+								status: true,
+								message: "OTP success"
+							});
+						}
+					}
 				});
 			}
 		}
@@ -141,7 +161,7 @@ router.post('/postotp', function (req, res, next) {
 });
 
 
-function otp(){
+function otp() {
 	return Math.floor(1000 + Math.random() * 9000);
 }
 
@@ -200,3 +220,17 @@ module.exports = router;
 //   passport.authenticate('google', { failureRedirect: '/' ,successRedirect:'/profile' }),function(req,res){
 //   	req.app.locals.userdata=req.user;
 //   });
+
+
+	// twilio.sendMessage({
+				// 	to: 'data.mobile_number',
+				// 	from: '+1352464-8838 ',
+				// 	body: code
+				// }, function (err, responseData) {
+				// 	if (!err) {
+				// 		console.log(responseData.from);
+				// 		console.log(responseData.body);
+				// 	} else {
+				// 		console.log(err);
+				// 	}
+				// });
